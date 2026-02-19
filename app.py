@@ -19,7 +19,7 @@ st.markdown("""
             font-weight: 700;
             color: #444444;
             font-size: 18px;
-            margin-top: -50px; 
+            margin-top: -40px; 
             margin-bottom: -5px;
             padding-right: 5px;
         }
@@ -34,7 +34,7 @@ st.markdown("""
         /* [구분선 설정] 구분선 위쪽 간격을 줄이고, 아래쪽 간격은 유지 */
         hr {
             margin-top: 0px !important;    /* 선 위쪽 간격 삭제 */
-            margin-bottom: 35px !important; /* 선 아래쪽 간격을 주어 하단 글자 위치 고정 */
+            margin-bottom: 40px !important; /* 선 아래쪽 간격을 주어 하단 글자 위치 고정 */
         }
 
         /* [탭 위치 조절] 이전 설정 유지 */
