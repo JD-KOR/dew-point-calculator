@@ -46,7 +46,7 @@ st.markdown("""
         /* [핵심 수정: 탭 버튼] 윗부분 1/3 잘림 해결을 위한 패딩 및 높이 조정 */
         [data-baseweb="tab"] { 
             margin-right: 40px !important; 
-            padding-top: -10px !important;    /* 윗부분 공간을 대폭 늘려 잘림 방지 */
+            padding-top: 0px !important;    /* 윗부분 공간을 대폭 늘려 잘림 방지 */
             padding-bottom: 25px !important; /* 하단 라인과의 간격 확보 */
             height: auto !important;         /* 높이를 자동으로 설정하여 내용 수용 */
             overflow: visible !important;    /* 개별 탭 버튼에서도 넘침 허용 */
@@ -100,7 +100,7 @@ c = 243.04
 
 with tab1:
     # 탭 내부 구분선 위치 조절
-    st.markdown('<div style="margin-top: 30px;"></div>', unsafe_allow_html=True)
+    st.markdown('<div style="margin-top: 20px;"></div>', unsafe_allow_html=True)
     st.markdown("---")
     
     st.header("📌 입력 (Input)")
