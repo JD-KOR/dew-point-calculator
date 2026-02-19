@@ -4,7 +4,7 @@ import math
 # 1. 페이지 설정
 st.set_page_config(page_title="JD Calculator - Dew Point", layout="centered")
 
-# 2. CSS 주입: 탭 위치 상단 밀착 및 스타일 조정
+# 2. CSS 주입: 탭과 콘텐츠 사이의 유격을 최소화
 st.markdown("""
     <style>
         /* 배경 설정 */
@@ -27,43 +27,48 @@ st.markdown("""
         /* [제목 설정] */
         h1 {
             font-size: 1.9rem !important; 
-            margin-bottom: -10px !important;
+            margin-bottom: -15px !important;
             color: #1E1E1E;
         }
         
         /* 상단 메인 구분선 스타일 */
         hr {
             margin-top: 0px !important;
-            margin-bottom: 25px !important;
+            margin-bottom: 20px !important;
         }
 
-        /* [핵심 수정: 탭 전체 위치] 마이너스 마진을 주어 위로 바짝 붙임 */
+        /* [탭 전체 위치 조절] */
         .stTabs { 
-            margin-top: -15px !important; /* 이 값을 -20, -30으로 키우면 더 올라갑니다 */
+            margin-top: -15px !important; 
             overflow: visible !important; 
         }
 
-        /* [핵심 수정: 탭 버튼] Padding-top을 최소화하여 상단 여백 제거 */
+        /* [핵심 수정: 탭 버튼] 글자와 빨간 라인 사이 간격을 8px로 축소 */
         [data-baseweb="tab"] { 
             margin-right: 40px !important; 
-            padding-top: 2px !important;     /* 0에 가까운 최소 여백 */
-            padding-bottom: 25px !important;  /* 하단 빨간 라인과의 간격 유지 */
+            padding-top: 2px !important;     
+            padding-bottom: 8px !important;  /* 기존 25px -> 8px로 축소 */
             height: auto !important;
             overflow: visible !important;
         }
 
-        /* 탭 텍스트 설정 (괄호 포함) */
+        /* [핵심 수정: 탭 패널] 빨간 라인 바로 밑의 여백을 제거 */
+        [data-testid="stTabPanel"] {
+            padding-top: 0px !important;
+        }
+
+        /* 탭 텍스트 설정 */
         .stTabs [data-baseweb="tab"] p {
             font-size: 0.95rem !important; 
             white-space: pre !important; 
             text-align: left !important;
-            line-height: 1.5 !important;
+            line-height: 1.4 !important;
             font-weight: 500 !important;
             color: #31333F;
             margin: 0 !important;
         }
 
-        /* 탭 첫 줄(제목/이모티콘) 강조 */
+        /* 탭 첫 줄 강조 */
         .stTabs [data-baseweb="tab"] p::first-line {
             font-size: 1.3rem !important; 
             font-weight: 700 !important;
@@ -99,7 +104,8 @@ b = 17.625
 c = 243.04
 
 with tab1:
-    st.markdown('<div style="margin-top: 20px;"></div>', unsafe_allow_html=True)
+    # [수정] 빨간 라인과 구분선 사이의 간격을 0으로 조정
+    st.markdown('<div style="margin-top: 0px;"></div>', unsafe_allow_html=True)
     st.markdown("---")
     
     st.header("📌 입력 (Input)")
@@ -114,7 +120,8 @@ with tab1:
         st.metric(label="계산된 이슬점 (Dew Point)", value=f"{dp1:.2f} °C")
 
 with tab2:
-    st.markdown('<div style="margin-top: 30px;"></div>', unsafe_allow_html=True)
+    # [수정] 빨간 라인과 구분선 사이의 간격을 0으로 조정
+    st.markdown('<div style="margin-top: 0px;"></div>', unsafe_allow_html=True)
     st.markdown("---")
     
     st.header("📌 입력 (Input)")
