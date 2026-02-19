@@ -109,7 +109,7 @@ with tab1:
     st.markdown("---")
     
     st.header("📌 입력 (Input)")
-    t1 = st.number_input("현재 온도 (°C)", value=25.0, step=0.1, key="t1")
+    t1 = st.number_input("온도 (°C)", value=25.0, step=0.1, key="t1")
     rh1 = st.number_input("상대습도 (%)", value=50.0, min_value=0.1, max_value=100.0, step=0.1, key="rh1")
     
     if st.button("노점 계산하기", key="btn1", use_container_width=True):
@@ -125,8 +125,8 @@ with tab2:
     st.markdown("---")
     
     st.header("📌 입력 (Input)")
-    t2 = st.number_input("현재 온도 (°C)", value=25.0, step=0.1, key="t2")
-    dp2 = st.number_input("이슬점(노점) (°C)", value=13.9, step=0.1, key="dp2")
+    t2 = st.number_input("온도 (°C)", value=25.0, step=0.1, key="t2")
+    dp2 = st.number_input("노점 (°C)", value=13.9, step=0.1, key="dp2")
     
     if st.button("상대습도 계산하기", key="btn2", use_container_width=True):
         gamma_dp = (b * dp2) / (c + dp2)
