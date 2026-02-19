@@ -19,7 +19,7 @@ st.markdown("""
             font-weight: 700;
             color: #444444;
             font-size: 18px;
-            margin-top: -50px; /* 더 위로 올렸습니다 */
+            margin-top: -40px; /* 더 위로 올렸습니다 */
             margin-bottom: -5px;
             padding-right: 5px;
         }
@@ -68,8 +68,8 @@ st.markdown("---")
 # 이모티콘은 보통 한글 1글자보다 폭이 약간 넓습니다. 
 # 아래 문자열에서 ( 앞의 공백을 늘리거나 줄여보세요.
 tab1, tab2 = st.tabs([
-    "💧 노점 계산\n   (Temp/RH → DP)", 
-    "☁️ 상대습도 계산\n   (Temp/DP → RH)"
+    "💧 노점 계산\n      (Temp/RH → DP)", 
+    "☁️ 상대습도 계산\n      (Temp/DP → RH)"
 ])
 
 # 계산 로직 (Magnus Formula)
