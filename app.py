@@ -50,7 +50,7 @@ st.markdown("""
     <div class="jd-header">JD Calculator</div>
     """, unsafe_allow_html=True)
 
-st.title("🌡️ 공기 라인 습도/노점 계산기")
+st.title("🌡️ 습도/노점 계산기")
 st.markdown("---")
 
 # 상단 탭 구성
