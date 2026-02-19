@@ -43,7 +43,7 @@ st.markdown("""
 
         /* [추가] 탭의 첫 번째 줄(이모티콘 + 노점/상대습도 계산)만 크기 확대 */
         .stTabs [data-baseweb="tab"] p::first-line {
-            font-size: 1.5rem !important; /* 제목과 이모티콘 크기 (기존의 약 1.5배) */
+            font-size: 1.45rem !important; /* 제목과 이모티콘 크기 (기존의 약 1.5배) */
             font-weight: 700 !important;   /* 좀 더 굵게 */
         }
 
