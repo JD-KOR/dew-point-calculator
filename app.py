@@ -4,7 +4,7 @@ import math
 # 1. 페이지 설정
 st.set_page_config(page_title="JD Calculator - Dew Point", layout="centered")
 
-# 2. CSS 주입: 탭의 첫 줄만 크기 확대
+# 2. CSS 주입: 디자인 최적화 및 탭 위치 상향 조정
 st.markdown("""
     <style>
         /* 배경 설정: 은은한 그라데이션 */
@@ -12,7 +12,7 @@ st.markdown("""
             background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
         }
 
-        /* [JD Calculator 위치] */
+        /* [JD Calculator 위치] - 값을 크게 할수록 위로 올라감 */
         .jd-header {
             text-align: right;
             font-family: 'Noto Sans KR', sans-serif;
@@ -24,16 +24,21 @@ st.markdown("""
             padding-right: 5px;
         }
 
-        /* 제목 폰트 70% 수준 */
+        /* [제목 설정] 하단 여백(margin-bottom)을 줄여 탭을 위로 당김 */
         h1 {
             font-size: 1.9rem !important; 
-            margin-bottom: 1.5rem !important;
+            margin-bottom: 0.5rem !important; /* 기존 1.5rem에서 0.5rem으로 축소 */
             color: #1E1E1E;
         }
         
-        /* [핵심 수정] 탭 텍스트 설정 */
+        /* [핵심: 탭 전체 위치 조절] 탭 섹션 전체를 위로 끌어올림 */
+        .stTabs {
+            margin-top: -25px !important; /* 이 숫자를 -40, -50 등으로 키우면 더 올라갑니다 */
+        }
+
+        /* 탭 텍스트 설정 (괄호 포함) */
         .stTabs [data-baseweb="tab"] p {
-            font-size: 0.95rem !important; /* 두 번째 줄(괄호) 크기 */
+            font-size: 0.95rem !important; 
             white-space: pre !important; 
             text-align: left !important;
             line-height: 1.5 !important;
@@ -41,10 +46,10 @@ st.markdown("""
             color: #31333F;
         }
 
-        /* [추가] 탭의 첫 번째 줄(이모티콘 + 노점/상대습도 계산)만 크기 확대 */
+        /* 탭의 첫 번째 줄(제목+이모티콘) 강조 */
         .stTabs [data-baseweb="tab"] p::first-line {
-            font-size: 1.3rem !important; /* 제목과 이모티콘 크기 (기존의 약 1.5배) */
-            font-weight: 700 !important;   /* 좀 더 굵게 */
+            font-size: 1.3rem !important; 
+            font-weight: 700 !important;
         }
 
         /* 탭 사이 간격 */
@@ -71,8 +76,7 @@ st.markdown("""
 st.title("🌡️ 노점/상대습도 계산기")
 st.markdown("---")
 
-# 3. 탭 구성: 여기서 공백 개수로 괄호 위치를 정밀하게 맞추세요.
-# 첫 줄의 폰트가 커졌기 때문에 괄호를 맞추기 위한 공백 개수가 달라질 수 있습니다.
+# 3. 탭 구성: 여기서 공백 개수로 괄호 위치를 미세 조정하세요.
 tab1, tab2 = st.tabs([
     "💧 노점 계산\n    (Temp/RH → DP)", 
     "☁️ 상대습도 계산\n    (Temp/DP → RH)"
