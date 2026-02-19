@@ -4,7 +4,7 @@ import math
 # 1. 페이지 설정
 st.set_page_config(page_title="JD Calculator - Dew Point", layout="centered")
 
-# 2. CSS 주입: 폰트 크기 및 레이아웃 (이전 대비 70% 수준)
+# 2. CSS 주입: 탭 줄바꿈 및 왼쪽 정렬, 폰트 크기 유지
 st.markdown("""
     <style>
         /* JD Calculator 문구 스타일 */
@@ -42,19 +42,23 @@ st.markdown("""
             font-size: 1.12rem !important;
         }
 
-        /* 탭 텍스트 */
+        /* [수정] 탭 텍스트 줄바꿈 및 첫 글자 정렬 */
         .stTabs [data-baseweb="tab"] p {
             font-size: 0.91rem !important;
+            white-space: pre-wrap !important; /* 줄바꿈 허용 */
+            text-align: left !important;      /* 왼쪽 정렬 (괄호 위치 정렬) */
+            line-height: 1.3 !important;      /* 줄 간격 조절 */
+            margin: 0 !important;
         }
     </style>
     <div class="jd-header">JD Calculator</div>
     """, unsafe_allow_html=True)
 
-st.title("🌡️ 공기 라인 습도/노점 계산기")
+st.title("🌡️ 노점/상대습도 계산기")
 st.markdown("---")
 
-# 상단 탭 구성
-tab1, tab2 = st.tabs(["💧 노점 계산 (Temp/RH → DP)", "☁️ 상대습도 계산 (Temp/DP → RH)"])
+# [수정] 탭 제목에 줄바꿈(\n) 적용
+tab1, tab2 = st.tabs(["노점 계산\n(Temp/RH → DP)", "상대습도 계산\n(Temp/DP → RH)"])
 
 # Magnus 상수
 b = 17.625
@@ -68,7 +72,6 @@ with tab1:
     
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("노점 계산하기", key="btn1", use_container_width=True):
-        # [수정된 부분] 괄호를 정확히 닫았습니다.
         gamma1 = math.log(rh1 / 100.0) + (b * t1 / (c + t1))
         dp1 = (c * gamma1) / (b - gamma1)
 
@@ -84,7 +87,6 @@ with tab2:
 
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("상대습도 계산하기", key="btn2", use_container_width=True):
-        # 역산 로직
         gamma_dp = (b * dp2) / (c + dp2)
         rh2 = 100 * math.exp(gamma_dp - (b * t2) / (c + t2))
 
