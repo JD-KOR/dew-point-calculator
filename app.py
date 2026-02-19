@@ -98,7 +98,7 @@ c = 243.04
 
 with tab1:
     # 탭 내부 구분선 위치 조절
-    st.markdown('<div style="margin-top: 30px;"></div>', unsafe_allow_html=True)
+    st.markdown('<div style="margin-top: 50px;"></div>', unsafe_allow_html=True)
     st.markdown("---")
     
     st.header("📌 입력 (Input)")
