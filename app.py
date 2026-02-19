@@ -4,9 +4,14 @@ import math
 # 1. 페이지 설정
 st.set_page_config(page_title="JD Calculator - Dew Point", layout="centered")
 
-# 2. CSS 주입: 탭 줄바꿈 및 왼쪽 정렬, 폰트 크기 유지
+# 2. CSS 주입: 제목 크기 축소 및 탭 정렬
 st.markdown("""
     <style>
+        /* [제목 폰트 크기 변경 부분] h1 태그의 크기를 70% 수준으로 축소 */
+        h1 {
+            font-size: 1.75rem !important; /* 기존 약 2.5rem의 70% */
+        }
+
         /* JD Calculator 문구 스타일 */
         .jd-header {
             text-align: right;
@@ -22,10 +27,9 @@ st.markdown("""
         .stNumberInput label p {
             font-size: 1.26rem !important;
             font-weight: 600 !important;
-            color: #31333F;
         }
         
-        /* 숫자 입력칸 내부 숫자 및 높이 */
+        /* 숫자 입력칸 내부 숫자 */
         .stNumberInput input {
             font-size: 1.4rem !important;
             height: 42px !important;
@@ -36,29 +40,28 @@ st.markdown("""
             font-size: 3.15rem !important;
             font-weight: 700 !important;
         }
-        
-        /* 결과 레이블 */
-        [data-testid="stMetricLabel"] p {
-            font-size: 1.12rem !important;
-        }
 
-        /* [수정] 탭 텍스트 줄바꿈 및 첫 글자 정렬 */
+        /* 탭 텍스트 설정: 줄바꿈 및 왼쪽 정렬 */
         .stTabs [data-baseweb="tab"] p {
             font-size: 0.91rem !important;
-            white-space: pre-wrap !important; /* 줄바꿈 허용 */
-            text-align: left !important;      /* 왼쪽 정렬 (괄호 위치 정렬) */
-            line-height: 1.3 !important;      /* 줄 간격 조절 */
-            margin: 0 !important;
+            white-space: pre-wrap !important;
+            text-align: left !important;
+            line-height: 1.3 !important;
         }
     </style>
     <div class="jd-header">JD Calculator</div>
     """, unsafe_allow_html=True)
 
-st.title("🌡️ 노점/상대습도 계산기")
+# 메인 제목
+st.title("🌡️ 공기 라인 습도/노점 계산기")
 st.markdown("---")
 
-# [수정] 탭 제목에 줄바꿈(\n) 적용
-tab1, tab2 = st.tabs(["노점 계산\n(Temp/RH → DP)", "상대습도 계산\n(Temp/DP → RH)"])
+# 탭 구성: 이모티콘 추가 및 공백을 이용한 괄호 위치 정렬
+# '노'와 '상' 글자 아래에 괄호가 오도록 앞에 공백을 추가했습니다.
+tab1, tab2 = st.tabs([
+    "💧 노점 계산\n   (Temp/RH → DP)", 
+    "☁️ 상대습도 계산\n   (Temp/DP → RH)"
+])
 
 # Magnus 상수
 b = 17.625
@@ -74,12 +77,11 @@ with tab1:
     if st.button("노점 계산하기", key="btn1", use_container_width=True):
         gamma1 = math.log(rh1 / 100.0) + (b * t1 / (c + t1))
         dp1 = (c * gamma1) / (b - gamma1)
-
         st.markdown("---")
         st.header("📊 결과 (Result)")
         st.metric(label="계산된 이슬점 (Dew Point)", value=f"{dp1:.2f} °C")
 
-# --- Tab 2: 상대습도 계산 (역산) ---
+# --- Tab 2: 상대습도 계산 ---
 with tab2:
     st.header("📌 입력 (Input)")
     t2 = st.number_input("현재 온도 (°C)", value=25.0, step=0.1, key="t2")
@@ -89,10 +91,8 @@ with tab2:
     if st.button("상대습도 계산하기", key="btn2", use_container_width=True):
         gamma_dp = (b * dp2) / (c + dp2)
         rh2 = 100 * math.exp(gamma_dp - (b * t2) / (c + t2))
-
         st.markdown("---")
         st.header("📊 결과 (Result)")
-        
         if rh2 > 100.1:
             st.error(f"오류: 노점({dp2}°C)이 현재 온도({t2}°C)보다 높을 수 없습니다.")
         else:
