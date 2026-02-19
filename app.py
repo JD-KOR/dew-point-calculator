@@ -4,7 +4,7 @@ import math
 # 1. 페이지 설정
 st.set_page_config(page_title="JD Calculator - Dew Point", layout="centered")
 
-# 2. CSS 주입: 디자인 및 레이아웃 최적화
+# 2. CSS 주입: 레이아웃 정밀 조정
 st.markdown("""
     <style>
         /* 배경 설정: 은은한 그라데이션 */
@@ -19,12 +19,12 @@ st.markdown("""
             font-weight: 700;
             color: #444444;
             font-size: 18px;
-            margin-top: -50px; 
+            margin-top: -40px; 
             margin-bottom: -5px;
             padding-right: 5px;
         }
 
-        /* [제목 설정] 70% 수준의 크기 */
+        /* [제목 설정] */
         h1 {
             font-size: 1.9rem !important; 
             margin-bottom: -10px !important;
@@ -34,19 +34,31 @@ st.markdown("""
         /* 상단 메인 구분선 스타일 */
         hr {
             margin-top: 0px !important;
-            margin-bottom: 35px !important;
+            margin-bottom: 25px !important;
         }
 
-        /* 탭 전체 위치 및 텍스트 설정 */
-        .stTabs { margin-top: -20px !important; }
+        /* [탭 전체 위치 조절] 윗부분이 잘리지 않도록 플러스 마진과 패딩 부여 */
+        .stTabs { 
+            margin-top: 5px !important; 
+            padding-top: 10px !important; 
+        }
 
+        /* [탭 버튼 설정] 하단 패딩을 주어 빨간색 라인을 밑으로 밀어냄 */
+        [data-baseweb="tab"] { 
+            margin-right: 40px !important; 
+            padding-top: 15px !important;    /* 이모티콘 윗공간 확보 */
+            padding-bottom: 25px !important; /* 하단 라인과의 간격 확보 (여기를 조절하세요) */
+        }
+
+        /* 탭 텍스트 설정 (괄호 포함) */
         .stTabs [data-baseweb="tab"] p {
             font-size: 0.95rem !important; 
             white-space: pre !important; 
             text-align: left !important;
-            line-height: 1.5 !important;
+            line-height: 1.4 !important;
             font-weight: 500 !important;
             color: #31333F;
+            margin: 0 !important;
         }
 
         /* 탭 첫 줄(제목/이모티콘) 강조 및 크기 확대 */
@@ -54,9 +66,6 @@ st.markdown("""
             font-size: 1.3rem !important; 
             font-weight: 700 !important;
         }
-
-        /* 탭 사이 간격 */
-        [data-baseweb="tab"] { margin-right: 40px !important; }
 
         /* 카드 디자인 스타일 */
         .stNumberInput, [data-testid="stMetric"], .stButton {
@@ -75,7 +84,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 st.title("🌡️ 노점/상대습도 계산기")
-st.markdown("---") # 첫 번째 메인 구분선
+st.markdown("---") 
 
 # 3. 탭 구성
 tab1, tab2 = st.tabs([
@@ -88,10 +97,9 @@ b = 17.625
 c = 243.04
 
 with tab1:
-    # [여기가 핵심!] 괄호 문장과 구분선 사이의 간격을 조절합니다.
-    # margin-top의 50px을 70px, 80px로 키울수록 구분선이 더 내려갑니다.
-    st.markdown('<div style="margin-top: 50px;"></div>', unsafe_allow_html=True)
-    st.markdown("---") # 탭 내부 구분선
+    # 탭 내부 구분선 위치 조절
+    st.markdown('<div style="margin-top: 30px;"></div>', unsafe_allow_html=True)
+    st.markdown("---")
     
     st.header("📌 입력 (Input)")
     t1 = st.number_input("현재 온도 (°C)", value=25.0, step=0.1, key="t1")
@@ -105,8 +113,7 @@ with tab1:
         st.metric(label="계산된 이슬점 (Dew Point)", value=f"{dp1:.2f} °C")
 
 with tab2:
-    # 상대습도 탭도 동일하게 적용
-    st.markdown('<div style="margin-top: 50px;"></div>', unsafe_allow_html=True)
+    st.markdown('<div style="margin-top: 30px;"></div>', unsafe_allow_html=True)
     st.markdown("---")
     
     st.header("📌 입력 (Input)")
