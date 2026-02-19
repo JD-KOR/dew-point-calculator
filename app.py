@@ -27,13 +27,13 @@ st.markdown("""
         /* [제목 설정] 하단 여백(margin-bottom)을 줄여 탭을 위로 당김 */
         h1 {
             font-size: 1.9rem !important; 
-            margin-bottom: 0.5rem !important; /* 기존 1.5rem에서 0.5rem으로 축소 */
+            margin-bottom: 0rem !important; /* 기존 1.5rem에서 0.5rem으로 축소 */
             color: #1E1E1E;
         }
         
         /* [핵심: 탭 전체 위치 조절] 탭 섹션 전체를 위로 끌어올림 */
         .stTabs {
-            margin-top: -25px !important; /* 이 숫자를 -40, -50 등으로 키우면 더 올라갑니다 */
+            margin-top: -35px !important; /* 이 숫자를 -40, -50 등으로 키우면 더 올라갑니다 */
         }
 
         /* 탭 텍스트 설정 (괄호 포함) */
