@@ -4,12 +4,13 @@ import math
 # 1. 페이지 설정
 st.set_page_config(page_title="JD Calculator - Dew Point", layout="centered")
 
-# 2. CSS 주입: 제목 크기 축소 및 탭 정렬
+# 2. CSS 주입: 제목 크기 축소, 탭 간격 및 정렬 조정
 st.markdown("""
     <style>
-        /* [제목 폰트 크기 변경 부분] h1 태그의 크기를 70% 수준으로 축소 */
+        /* [제목 폰트 크기] 70% 수준으로 축소 */
         h1 {
-            font-size: 1.75rem !important; /* 기존 약 2.5rem의 70% */
+            font-size: 1.5rem !important; 
+            margin-bottom: 1rem !important;
         }
 
         /* JD Calculator 문구 스타일 */
@@ -23,31 +24,26 @@ st.markdown("""
             padding-right: 5px;
         }
         
-        /* 입력창 레이블 */
-        .stNumberInput label p {
-            font-size: 1.26rem !important;
-            font-weight: 600 !important;
-        }
-        
-        /* 숫자 입력칸 내부 숫자 */
-        .stNumberInput input {
-            font-size: 1.4rem !important;
-            height: 42px !important;
-        }
-        
-        /* 결과 값 Metric Value */
-        [data-testid="stMetricValue"] {
-            font-size: 3.15rem !important;
-            font-weight: 700 !important;
+        /* 탭 사이의 간격을 벌려주는 설정 */
+        [data-baseweb="tab"] {
+            margin-right: 30px !important; /* 탭 사이의 우측 여백 추가 */
+            padding-left: 0px !important;
+            padding-right: 10px !important;
         }
 
         /* 탭 텍스트 설정: 줄바꿈 및 왼쪽 정렬 */
         .stTabs [data-baseweb="tab"] p {
-            font-size: 0.91rem !important;
+            font-size: 0.95rem !important;
             white-space: pre-wrap !important;
             text-align: left !important;
-            line-height: 1.3 !important;
+            line-height: 1.4 !important;
+            font-weight: 500 !important;
         }
+
+        /* 숫자 입력칸 및 레이블 스타일 유지 */
+        .stNumberInput label p { font-size: 1.26rem !important; font-weight: 600 !important; }
+        .stNumberInput input { font-size: 1.4rem !important; height: 42px !important; }
+        [data-testid="stMetricValue"] { font-size: 3.15rem !important; font-weight: 700 !important; }
     </style>
     <div class="jd-header">JD Calculator</div>
     """, unsafe_allow_html=True)
@@ -56,8 +52,8 @@ st.markdown("""
 st.title("🌡️ 공기 라인 습도/노점 계산기")
 st.markdown("---")
 
-# 탭 구성: 이모티콘 추가 및 공백을 이용한 괄호 위치 정렬
-# '노'와 '상' 글자 아래에 괄호가 오도록 앞에 공백을 추가했습니다.
+# 탭 구성: 이모티콘 너비를 고려하여 괄호 앞에 공백을 추가했습니다.
+# (이모티콘 💧, ☁️ 뒤에 오는 '노'와 '상' 글자 위치에 괄호를 맞춤)
 tab1, tab2 = st.tabs([
     "💧 노점 계산\n   (Temp/RH → DP)", 
     "☁️ 상대습도 계산\n   (Temp/DP → RH)"
