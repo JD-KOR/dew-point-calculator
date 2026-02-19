@@ -4,7 +4,7 @@ import math
 # 1. 페이지 설정
 st.set_page_config(page_title="JD Calculator - Dew Point", layout="centered")
 
-# 2. CSS 주입: 레이아웃 정밀 조정
+# 2. CSS 주입: 잘림 방지 및 레이아웃 정밀 조정
 st.markdown("""
     <style>
         /* 배경 설정: 은은한 그라데이션 */
@@ -37,17 +37,19 @@ st.markdown("""
             margin-bottom: 25px !important;
         }
 
-        /* [탭 전체 위치 조절] 윗부분이 잘리지 않도록 플러스 마진과 패딩 부여 */
+        /* [핵심 수정: 탭 전체 위치] 잘림을 방지하기 위해 상단 여백 확보 */
         .stTabs { 
-            margin-top: 5px !important; 
-            padding-top: 10px !important; 
+            margin-top: 20px !important; 
+            overflow: visible !important; /* 내부 요소가 넘쳐도 잘리지 않게 설정 */
         }
 
-        /* [탭 버튼 설정] 하단 패딩을 주어 빨간색 라인을 밑으로 밀어냄 */
+        /* [핵심 수정: 탭 버튼] 윗부분 1/3 잘림 해결을 위한 패딩 및 높이 조정 */
         [data-baseweb="tab"] { 
             margin-right: 40px !important; 
-            padding-top: 15px !important;    /* 이모티콘 윗공간 확보 */
-            padding-bottom: 25px !important; /* 하단 라인과의 간격 확보 (여기를 조절하세요) */
+            padding-top: 35px !important;    /* 윗부분 공간을 대폭 늘려 잘림 방지 */
+            padding-bottom: 25px !important; /* 하단 라인과의 간격 확보 */
+            height: auto !important;         /* 높이를 자동으로 설정하여 내용 수용 */
+            overflow: visible !important;    /* 개별 탭 버튼에서도 넘침 허용 */
         }
 
         /* 탭 텍스트 설정 (괄호 포함) */
@@ -55,7 +57,7 @@ st.markdown("""
             font-size: 0.95rem !important; 
             white-space: pre !important; 
             text-align: left !important;
-            line-height: 1.4 !important;
+            line-height: 1.6 !important;    /* 줄 간격을 늘려 텍스트가 꽉 끼지 않게 함 */
             font-weight: 500 !important;
             color: #31333F;
             margin: 0 !important;
@@ -98,7 +100,7 @@ c = 243.04
 
 with tab1:
     # 탭 내부 구분선 위치 조절
-    st.markdown('<div style="margin-top: 25px;"></div>', unsafe_allow_html=True)
+    st.markdown('<div style="margin-top: 30px;"></div>', unsafe_allow_html=True)
     st.markdown("---")
     
     st.header("📌 입력 (Input)")
