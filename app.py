@@ -4,28 +4,31 @@ import math
 # 1. 페이지 설정
 st.set_page_config(page_title="JD Calculator - Dew Point", layout="centered")
 
-# 2. CSS 주입: 모눈종이 제거 및 '소프트 대시보드' 스타일 적용
+# 2. CSS 주입: 위치 및 스타일 정밀 조정
 st.markdown("""
     <style>
-        /* [배경 설정] 눈이 편한 은은한 그라데이션 */
+        /* [배경 설정] 은은한 그라데이션 */
         .stApp {
             background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
         }
 
-        /* JD Calculator 문구 스타일 */
+        /* [JD Calculator 위치 조절 부분] */
         .jd-header {
             text-align: right;
             font-family: 'Noto Sans KR', sans-serif;
             font-weight: 700;
             color: #444444;
             font-size: 18px;
-            margin-bottom: -10px;
+            
+            /* 수치를 조절해보세요: -값을 크게 할수록 위로 올라갑니다 */
+            margin-top: -40px; 
+            margin-bottom: -5px;
             padding-right: 5px;
         }
 
         /* [제목 폰트 크기] 70% 수준 유지 */
         h1 {
-            font-size: 1.7rem !important; 
+            font-size: 1.9rem !important; 
             margin-bottom: 1.5rem !important;
             color: #1E1E1E;
         }
@@ -44,7 +47,7 @@ st.markdown("""
             font-weight: 500 !important;
         }
 
-        /* [카드 디자인] 입력 및 결과 섹션에 입체감 부여 */
+        /* [카드 디자인] 입체감 부여 */
         .stNumberInput, [data-testid="stMetric"], .stButton {
             background-color: #ffffff;
             padding: 15px;
@@ -54,7 +57,7 @@ st.markdown("""
             margin-bottom: 10px;
         }
 
-        /* 숫자 입력칸 스타일 유지 */
+        /* 숫자 입력칸 및 결과값 스타일 유지 */
         .stNumberInput label p { font-size: 1.26rem !important; font-weight: 600 !important; }
         .stNumberInput input { font-size: 1.4rem !important; height: 42px !important; }
         [data-testid="stMetricValue"] { font-size: 3.15rem !important; font-weight: 700 !important; color: #1f77b4; }
