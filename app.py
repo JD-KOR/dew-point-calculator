@@ -4,7 +4,7 @@ import math
 # 1. 페이지 설정
 st.set_page_config(page_title="JD Calculator - Dew Point", layout="centered")
 
-# 2. CSS 주입: 탭 섹션 위치 하향 조정 및 디자인 유지
+# 2. CSS 주입: 탭과 콘텐츠 사이의 유격을 최소화
 st.markdown("""
     <style>
         /* 배경 설정 */
@@ -12,7 +12,7 @@ st.markdown("""
             background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
         }
 
-        /* [JD Calculator] 위치 고정 */
+        /* [JD Calculator 위치] */
         .jd-header {
             text-align: right;
             font-family: 'Noto Sans KR', sans-serif;
@@ -24,36 +24,35 @@ st.markdown("""
             padding-right: 5px;
         }
 
-        /* [메인 제목] 위치 고정 */
+        /* [제목 설정] */
         h1 {
             font-size: 1.9rem !important; 
-            margin-top: -48px !important;   
-            margin-bottom: 23px !important; 
+            margin-bottom: -15px !important;
             color: #1E1E1E;
         }
         
-        /* 상단 메인 구분선 스타일 (위치 유지) */
+        /* 상단 메인 구분선 스타일 */
         hr {
             margin-top: 0px !important;
             margin-bottom: 20px !important;
         }
 
-        /* [핵심 수정: 탭 섹션 위치] margin-top을 플러스로 변경하여 아래로 이동 */
+        /* [탭 전체 위치 조절] */
         .stTabs { 
-            margin-top: 15px !important; /* 숫자를 키울수록 탭 뭉치가 아래로 내려갑니다 */
+            margin-top: -15px !important; 
             overflow: visible !important; 
         }
 
-        /* 탭 버튼 및 하단 라인 간격 조절 */
+        /* [핵심 수정: 탭 버튼] 글자와 빨간 라인 사이 간격을 8px로 축소 */
         [data-baseweb="tab"] { 
             margin-right: 40px !important; 
             padding-top: 2px !important;     
-            padding-bottom: 8px !important;  
+            padding-bottom: 8px !important;  /* 기존 25px -> 8px로 축소 */
             height: auto !important;
             overflow: visible !important;
         }
 
-        /* 탭 패널 여백 제거 */
+        /* [핵심 수정: 탭 패널] 빨간 라인 바로 밑의 여백을 제거 */
         [data-testid="stTabPanel"] {
             padding-top: 0px !important;
         }
@@ -69,6 +68,7 @@ st.markdown("""
             margin: 0 !important;
         }
 
+        /* 탭 첫 줄 강조 */
         .stTabs [data-baseweb="tab"] p::first-line {
             font-size: 1.3rem !important; 
             font-weight: 700 !important;
@@ -99,11 +99,12 @@ tab1, tab2 = st.tabs([
     "☁️ 상대습도 계산\n    (Temp/DP → RH)"
 ])
 
-# Magnus 상수: $b = 17.625, c = 243.04$
+# 계산 로직 (Magnus Formula)
 b = 17.625
 c = 243.04
 
 with tab1:
+    # [수정] 빨간 라인과 구분선 사이의 간격을 0으로 조정
     st.markdown('<div style="margin-top: 0px;"></div>', unsafe_allow_html=True)
     st.markdown("---")
     
@@ -119,6 +120,7 @@ with tab1:
         st.metric(label="계산된 이슬점 (Dew Point)", value=f"{dp1:.2f} °C")
 
 with tab2:
+    # [수정] 빨간 라인과 구분선 사이의 간격을 0으로 조정
     st.markdown('<div style="margin-top: 0px;"></div>', unsafe_allow_html=True)
     st.markdown("---")
     
