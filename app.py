@@ -26,7 +26,7 @@ st.markdown("""
 
         /* 제목 폰트 70% 수준 */
         h1 {
-            font-size: 1.5rem !important; 
+            font-size: 1.8rem !important; 
             margin-bottom: 1.5rem !important;
             color: #1E1E1E;
         }
