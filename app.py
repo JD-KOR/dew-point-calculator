@@ -4,10 +4,10 @@ import math
 # 1. 페이지 설정
 st.set_page_config(page_title="JD Calculator - Dew Point", layout="centered")
 
-# 2. CSS 주입: 잘림 방지 및 레이아웃 정밀 조정
+# 2. CSS 주입: 탭 위치 상단 밀착 및 스타일 조정
 st.markdown("""
     <style>
-        /* 배경 설정: 은은한 그라데이션 */
+        /* 배경 설정 */
         .stApp {
             background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
         }
@@ -37,19 +37,19 @@ st.markdown("""
             margin-bottom: 25px !important;
         }
 
-        /* [핵심 수정: 탭 전체 위치] 잘림을 방지하기 위해 상단 여백 확보 */
+        /* [핵심 수정: 탭 전체 위치] 마이너스 마진을 주어 위로 바짝 붙임 */
         .stTabs { 
-            margin-top: 20px !important; 
-            overflow: visible !important; /* 내부 요소가 넘쳐도 잘리지 않게 설정 */
+            margin-top: -15px !important; /* 이 값을 -20, -30으로 키우면 더 올라갑니다 */
+            overflow: visible !important; 
         }
 
-        /* [핵심 수정: 탭 버튼] 윗부분 1/3 잘림 해결을 위한 패딩 및 높이 조정 */
+        /* [핵심 수정: 탭 버튼] Padding-top을 최소화하여 상단 여백 제거 */
         [data-baseweb="tab"] { 
             margin-right: 40px !important; 
-            padding-top: 0px !important;    /* 윗부분 공간을 대폭 늘려 잘림 방지 */
-            padding-bottom: 25px !important; /* 하단 라인과의 간격 확보 */
-            height: auto !important;         /* 높이를 자동으로 설정하여 내용 수용 */
-            overflow: visible !important;    /* 개별 탭 버튼에서도 넘침 허용 */
+            padding-top: 2px !important;     /* 0에 가까운 최소 여백 */
+            padding-bottom: 25px !important;  /* 하단 빨간 라인과의 간격 유지 */
+            height: auto !important;
+            overflow: visible !important;
         }
 
         /* 탭 텍스트 설정 (괄호 포함) */
@@ -57,13 +57,13 @@ st.markdown("""
             font-size: 0.95rem !important; 
             white-space: pre !important; 
             text-align: left !important;
-            line-height: 1.6 !important;    /* 줄 간격을 늘려 텍스트가 꽉 끼지 않게 함 */
+            line-height: 1.5 !important;
             font-weight: 500 !important;
             color: #31333F;
             margin: 0 !important;
         }
 
-        /* 탭 첫 줄(제목/이모티콘) 강조 및 크기 확대 */
+        /* 탭 첫 줄(제목/이모티콘) 강조 */
         .stTabs [data-baseweb="tab"] p::first-line {
             font-size: 1.3rem !important; 
             font-weight: 700 !important;
@@ -99,7 +99,6 @@ b = 17.625
 c = 243.04
 
 with tab1:
-    # 탭 내부 구분선 위치 조절
     st.markdown('<div style="margin-top: 20px;"></div>', unsafe_allow_html=True)
     st.markdown("---")
     
