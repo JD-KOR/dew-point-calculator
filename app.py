@@ -4,36 +4,42 @@ import math
 # 1. 페이지 설정
 st.set_page_config(page_title="JD Calculator - Dew Point", layout="centered")
 
-# 2. CSS 주입: 디자인 최적화 및 탭 위치 상향 조정
+# 2. CSS 주입: 제목-구분선 간격 축소 및 하단 간격 유지
 st.markdown("""
     <style>
-        /* 배경 설정: 은은한 그라데이션 */
+        /* 배경 설정 */
         .stApp {
             background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
         }
 
-        /* [JD Calculator 위치] - 값을 크게 할수록 위로 올라감 */
+        /* [JD Calculator 위치] */
         .jd-header {
             text-align: right;
             font-family: 'Noto Sans KR', sans-serif;
             font-weight: 700;
             color: #444444;
             font-size: 18px;
-            margin-top: -40px; 
+            margin-top: -50px; 
             margin-bottom: -5px;
             padding-right: 5px;
         }
 
-        /* [제목 설정] 하단 여백(margin-bottom)을 줄여 탭을 위로 당김 */
+        /* [제목 설정] 제목 바로 아래 여백을 제거 */
         h1 {
             font-size: 1.9rem !important; 
-            margin-bottom: 0rem !important; /* 기존 1.5rem에서 0.5rem으로 축소 */
+            margin-bottom: -10px !important; /* 제목 아래 간격을 마이너스로 줄임 */
             color: #1E1E1E;
         }
         
-        /* [핵심: 탭 전체 위치 조절] 탭 섹션 전체를 위로 끌어올림 */
+        /* [구분선 설정] 구분선 위쪽 간격을 줄이고, 아래쪽 간격은 유지 */
+        hr {
+            margin-top: 0px !important;    /* 선 위쪽 간격 삭제 */
+            margin-bottom: 35px !important; /* 선 아래쪽 간격을 주어 하단 글자 위치 고정 */
+        }
+
+        /* [탭 위치 조절] 이전 설정 유지 */
         .stTabs {
-            margin-top: -35px !important; /* 이 숫자를 -40, -50 등으로 키우면 더 올라갑니다 */
+            margin-top: -20px !important; 
         }
 
         /* 탭 텍스트 설정 (괄호 포함) */
@@ -46,7 +52,7 @@ st.markdown("""
             color: #31333F;
         }
 
-        /* 탭의 첫 번째 줄(제목+이모티콘) 강조 */
+        /* 탭의 첫 번째 줄 강조 */
         .stTabs [data-baseweb="tab"] p::first-line {
             font-size: 1.3rem !important; 
             font-weight: 700 !important;
@@ -74,9 +80,9 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 st.title("🌡️ 노점/상대습도 계산기")
-st.markdown("---")
+st.markdown("---") # 첫 번째 구분선
 
-# 3. 탭 구성: 여기서 공백 개수로 괄호 위치를 미세 조정하세요.
+# 3. 탭 구성
 tab1, tab2 = st.tabs([
     "💧 노점 계산\n    (Temp/RH → DP)", 
     "☁️ 상대습도 계산\n    (Temp/DP → RH)"
