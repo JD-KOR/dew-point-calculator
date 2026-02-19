@@ -4,7 +4,7 @@ import math
 # 1. 페이지 설정
 st.set_page_config(page_title="JD Calculator - Dew Point", layout="centered")
 
-# 2. CSS 주입: 제목 크기, 탭 정렬, JD Calculator 위치
+# 2. CSS 주입: 탭의 첫 줄만 크기 확대
 st.markdown("""
     <style>
         /* 배경 설정: 은은한 그라데이션 */
@@ -12,14 +12,14 @@ st.markdown("""
             background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
         }
 
-        /* [JD Calculator 위치] margin-top으로 높이 조절 가능 */
+        /* [JD Calculator 위치] */
         .jd-header {
             text-align: right;
             font-family: 'Noto Sans KR', sans-serif;
             font-weight: 700;
             color: #444444;
             font-size: 18px;
-            margin-top: -40px; /* 더 위로 올렸습니다 */
+            margin-top: -40px; 
             margin-bottom: -5px;
             padding-right: 5px;
         }
@@ -31,13 +31,20 @@ st.markdown("""
             color: #1E1E1E;
         }
         
-        /* [핵심 수정] 탭 텍스트 설정: 공백을 그대로 유지하도록 'pre'로 변경 */
+        /* [핵심 수정] 탭 텍스트 설정 */
         .stTabs [data-baseweb="tab"] p {
-            font-size: 0.95rem !important;
-            white-space: pre !important; /* pre-wrap 대신 pre를 써야 공백이 유지됩니다 */
+            font-size: 0.95rem !important; /* 두 번째 줄(괄호) 크기 */
+            white-space: pre !important; 
             text-align: left !important;
-            line-height: 1.4 !important;
+            line-height: 1.5 !important;
             font-weight: 500 !important;
+            color: #31333F;
+        }
+
+        /* [추가] 탭의 첫 번째 줄(이모티콘 + 노점/상대습도 계산)만 크기 확대 */
+        .stTabs [data-baseweb="tab"] p::first-line {
+            font-size: 1.5rem !important; /* 제목과 이모티콘 크기 (기존의 약 1.5배) */
+            font-weight: 700 !important;   /* 좀 더 굵게 */
         }
 
         /* 탭 사이 간격 */
@@ -64,12 +71,11 @@ st.markdown("""
 st.title("🌡️ 노점/상대습도 계산기")
 st.markdown("---")
 
-# 3. 탭 구성: 여기서 공백 개수로 괄호 위치를 잡으세요.
-# 이모티콘은 보통 한글 1글자보다 폭이 약간 넓습니다. 
-# 아래 문자열에서 ( 앞의 공백을 늘리거나 줄여보세요.
+# 3. 탭 구성: 여기서 공백 개수로 괄호 위치를 정밀하게 맞추세요.
+# 첫 줄의 폰트가 커졌기 때문에 괄호를 맞추기 위한 공백 개수가 달라질 수 있습니다.
 tab1, tab2 = st.tabs([
-    "💧 노점 계산\n   (온도/RH → 노점)", 
-    "☁️ 상대습도 계산\n   (온도/노점 → RH)"
+    "💧 노점 계산\n    (Temp/RH → DP)", 
+    "☁️ 상대습도 계산\n    (Temp/DP → RH)"
 ])
 
 # 계산 로직 (Magnus Formula)
