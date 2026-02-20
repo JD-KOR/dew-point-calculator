@@ -2,17 +2,20 @@ import streamlit as st
 import math
 import matplotlib.pyplot as plt
 import io
+import pandas as pd # 표 출력을 위해 추가
 
 # 1. 페이지 설정
 st.set_page_config(page_title="JD Calculator - Dew Point", layout="centered")
 
-# 2. 세션 상태 초기화 (데이터 기록용)
+# 2. 데이터 보존을 위한 세션 상태 초기화
 if 'dp_history' not in st.session_state:
     st.session_state.dp_history = []
 if 'rh_history' not in st.session_state:
     st.session_state.rh_history = []
+if 'target_val' not in st.session_state:
+    st.session_state.target_val = 0.0
 
-# 3. CSS 주입 (기존 디자인 유지)
+# 3. CSS 주입 (디자인 정체성 유지)
 st.markdown("""
     <style>
         .stApp { background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%); }
@@ -23,22 +26,12 @@ st.markdown("""
         }
         h1 { font-size: 1.9rem !important; margin-bottom: -10px !important; color: #1E1E1E; }
         hr { margin-top: 0px !important; margin-bottom: 25px !important; }
-        .stTabs { margin-top: -15px !important; }
-        [data-baseweb="tab"] { 
-            margin-right: 40px !important; padding-top: 2px !important;     
-            padding-bottom: 8px !important; height: auto !important;
-        }
-        .stTabs [data-baseweb="tab"] p {
-            font-size: 0.95rem !important; white-space: pre !important; 
-            text-align: left !important; line-height: 1.5 !important;
-            font-weight: 500 !important; color: #31333F; margin: 0 !important;
-        }
-        .stTabs [data-baseweb="tab"] p::first-line { font-size: 1.3rem !important; font-weight: 700 !important; }
-        .stNumberInput, [data-testid="stMetric"], .stButton {
+        [data-testid="stMetricValue"] { font-size: 3.15rem !important; font-weight: 700 !important; color: #1f77b4; }
+        .stNumberInput, [data-testid="stMetric"], .stButton, .stTable {
             background-color: #ffffff; padding: 15px; border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); border: 1px solid #f0f0f0;
+            margin-bottom: 10px;
         }
-        [data-testid="stMetricValue"] { font-size: 3.15rem !important; font-weight: 700 !important; color: #1f77b4; }
     </style>
     <div class="jd-header">JD Calculator</div>
     """, unsafe_allow_html=True)
@@ -90,57 +83,83 @@ with tab2:
             else: st.metric(label="계산된 상대습도", value=f"{rh_val} %")
         else: st.warning("값을 입력해주세요.")
 
-# --- 데이터 시각화 섹션 (하단 공통) ---
+# --- 데이터 시각화 및 수렴성 분석 섹션 ---
 st.markdown("---")
-st.header("📈 데이터 경향 분석 (Trend Analysis)")
+st.header("📈 데이터 경향 및 수렴성 분석")
 
-col_target, col_name = st.columns(2)
-with col_target:
-    target_val = st.number_input("목표값(Target) 설정", value=0.0, step=0.1, format="%g")
-with col_name:
-    graph_name = st.text_input("그래프 이름 입력", value="JD_Trend_Analysis")
+# 목표값 설정 레이아웃 수정 (입력창 + 버튼)
+col_target_input, col_target_btn, col_graph_name = st.columns([2, 1, 2])
+with col_target_input:
+    new_target = st.number_input("목표값(Target) 입력", value=st.session_state.target_val, step=0.1, format="%g")
+with col_target_btn:
+    st.write("<div style='margin-top: 32px;'></div>", unsafe_allow_html=True)
+    if st.button("목표값 적용"):
+        st.session_state.target_val = new_target
+        st.success(f"목표가 {new_target}로 설정되었습니다.")
+with col_graph_name:
+    graph_name = st.text_input("그래프 이름", value="JD_Performance_Trend")
 
-# 그래프 그리기 로직
-history = st.session_state.dp_history if st.session_state.dp_history else st.session_state.rh_history
-y_label = "Dew Point (°C)" if st.session_state.dp_history else "Relative Humidity (%)"
+# 현재 활성화된 데이터 히스토리 선택
+current_history = st.session_state.dp_history if st.session_state.dp_history else st.session_state.rh_history
+unit = "°C" if st.session_state.dp_history else "%"
 
-if history:
-    fig, ax = plt.subplots(figsize=(8, 4))
-    x_axis = list(range(1, len(history) + 1))
+if current_history:
+    # 1. 그래프 영역
+    fig, ax = plt.subplots(figsize=(10, 5))
+    x_axis = list(range(1, len(current_history) + 1))
     
-    # 꺾은선 그래프 (파란색, 표식 포함)
-    ax.plot(x_axis, history, marker='o', linestyle='-', color='#1f77b4', linewidth=2, label='Measured')
+    ax.plot(x_axis, current_history, marker='o', markersize=8, linestyle='-', color='#1f77b4', linewidth=2.5, label='Measured Data')
     
-    # 목표선 (빨간색)
-    if target_val != 0:
-        ax.axhline(y=target_val, color='red', linestyle='--', linewidth=1.5, label=f'Target ({target_val})')
+    # 목표선 그리기
+    if st.session_state.target_val != 0:
+        ax.axhline(y=st.session_state.target_val, color='#d62728', linestyle='--', linewidth=2, label=f'Target ({st.session_state.target_val}{unit})')
     
-    ax.set_xticks(range(1, 11))
-    ax.set_xlabel("Input Sequence (1-10)")
-    ax.set_ylabel(y_label)
-    ax.set_title(graph_name)
-    ax.grid(True, linestyle=':', alpha=0.6)
+    # X축 동적 설정
+    ax.set_xticks(x_axis)
+    ax.set_xlabel("Test Sequence")
+    ax.set_ylabel(f"Value ({unit})")
+    ax.set_title(f"Trend Analysis: {graph_name}", fontsize=14, pad=20)
+    ax.grid(True, linestyle=':', alpha=0.7)
     ax.legend()
     
     st.pyplot(fig)
 
-    # 캡처 및 저장 기능
-    buf = io.BytesIO()
-    fig.savefig(buf, format="png", dpi=300)
-    st.download_button(
-        label="📸 그래프 캡처 및 저장",
-        data=buf.getvalue(),
-        file_name=f"{graph_name}.png",
-        mime="image/png",
-        use_container_width=True
-    )
+    # 2. 수렴성 분석 표 (오차율 계산)
+    st.subheader("📋 수렴성 오차 분석")
+    analysis_data = []
+    for i, val in enumerate(current_history):
+        error = abs(st.session_state.target_val - val)
+        error_pct = (error / st.session_state.target_val * 100) if st.session_state.target_val != 0 else 0
+        analysis_data.append({
+            "시행 (No.)": i + 1,
+            f"측정값 ({unit})": val,
+            f"목표값 ({unit})": st.session_state.target_val,
+            "오차 (Gap)": round(error, 2),
+            "오차율 (%)": f"{error_pct:.2f}%"
+        })
     
-    if st.button("🧹 데이터 초기화 (Reset History)", use_container_width=True):
-        st.session_state.dp_history = []
-        st.session_state.rh_history = []
-        st.rerun()
+    st.table(pd.DataFrame(analysis_data))
+
+    # 3. 유틸리티 버튼 (캡처 및 초기화)
+    col_save, col_reset = st.columns(2)
+    with col_save:
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png", dpi=300, bbox_inches='tight')
+        st.download_button(
+            label="📸 그래프 및 데이터 캡처 저장",
+            data=buf.getvalue(),
+            file_name=f"{graph_name}.png",
+            mime="image/png",
+            use_container_width=True
+        )
+    with col_reset:
+        if st.button("🧹 모든 데이터 초기화", use_container_width=True):
+            st.session_state.dp_history = []
+            st.session_state.rh_history = []
+            st.session_state.target_val = 0.0
+            st.rerun()
 else:
-    st.info("데이터를 입력하고 계산하면 여기에 그래프가 생성됩니다.")
+    st.info("데이터를 입력하면 실시간 트래킹 그래프와 오차 분석표가 나타납니다.")
 
 st.markdown("---")
-st.caption("Calculation based on Magnus-Tetens Formula | Professional Engineering Tool")
+st.caption("Calculation based on Magnus-Tetens Formula | Precision Engineering Analytics")
