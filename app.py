@@ -28,7 +28,7 @@ st.markdown("""
         
         /* --- [수정 사항] 웹 화면의 '수렴성 오차 분석' 표 글자 크기 확대 --- */
         .stTable td, .stTable th {
-            font-size: 1.0rem !important; /* 글자 크기를 크게 조절 */
+            font-size: 0.5rem !important; /* 글자 크기를 크게 조절 */
             padding: 12px !important;
         }
 
