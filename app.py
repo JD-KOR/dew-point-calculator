@@ -1,8 +1,26 @@
 import streamlit as st
 import math
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
 import io
 import pandas as pd
+import numpy as np
+
+# --- 폰트 설정 (한글 깨짐 방지) ---
+def get_korean_font():
+    # 시스템에 설치된 폰트 중 한글 지원 폰트 탐색
+    font_names = [f.name for f in fm.fontManager.ttflist]
+    if 'NanumGothic' in font_names:
+        return 'NanumGothic'
+    elif 'Malgun Gothic' in font_names:
+        return 'Malgun Gothic'
+    elif 'AppleGothic' in font_names:
+        return 'AppleGothic'
+    return 'sans-serif' # 기본값
+
+selected_font = get_korean_font()
+plt.rc('font', family=selected_font)
+plt.rcParams['axes.unicode_minus'] = False # 마이너스 기호 깨짐 방지
 
 # 1. 페이지 설정
 st.set_page_config(page_title="JD Calculator - Dew Point", layout="centered")
@@ -87,12 +105,11 @@ with c2:
 with c3:
     graph_name = st.text_input("그래프 이름", value="JD_Trend_Report")
 
-# 데이터 선택 (노점 혹은 상대습도 중 값이 있는 것)
 current_data = st.session_state.dp_history if st.session_state.dp_history else st.session_state.rh_history
 unit = "°C" if st.session_state.dp_history else "%"
 
 if current_data:
-    # 1. 표 데이터 미리 생성
+    # 1. 표 데이터 생성
     rows = []
     for i, v in enumerate(current_data):
         target = st.session_state.target_val
@@ -103,33 +120,49 @@ if current_data:
     df = pd.DataFrame(rows, columns=["No.", f"측정({unit})", f"목표({unit})", "오차", "오차율"])
 
     # 2. 통합 그래프 생성
-    # plt.close()를 사용하여 이전 그림 메모리 해제 (먹통 방지)
     plt.close('all')
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 10), gridspec_kw={'height_ratios': [1.8, 1]})
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 12), gridspec_kw={'height_ratios': [1.5, 1]})
     
     # 상단 그래프
     x = list(range(1, len(current_data) + 1))
-    ax1.plot(x, current_data, marker='o', markersize=8, color='#1f77b4', linewidth=2, label='Measured')
+    ax1.plot(x, current_data, marker='o', markersize=10, color='#1f77b4', linewidth=3, label='측정값 (Measured)')
     if st.session_state.target_val != 0:
-        ax1.axhline(y=st.session_state.target_val, color='#d62728', linestyle='--', label='Target')
+        ax1.axhline(y=st.session_state.target_val, color='#d62728', linestyle='--', linewidth=2, label='목표값 (Target)')
     
-    # Y축 범위 자동 조정 (15% 여백)
+    # --- 수정 사항 3: 스케일 최적화 ---
     all_vals = current_data + ([st.session_state.target_val] if st.session_state.target_val != 0 else [])
     ymin, ymax = min(all_vals), max(all_vals)
-    margin = (ymax - ymin) * 0.15 if ymax != ymin else 2.0
+    range_val = ymax - ymin
+    
+    if range_val == 0:
+        margin = 2.0
+    else:
+        margin = range_val * 0.25 # 상하 25% 여유 공간 확보
+        
     ax1.set_ylim(ymin - margin, ymax + margin)
     
+    # --- 수정 사항 2: 축 범례(Label) 및 타이틀 ---
+    ax1.set_xlabel("측정 순번 (No.)", fontsize=14, labelpad=10)
+    ax1.set_ylabel(f"측정값 ({unit})", fontsize=14, labelpad=10)
     ax1.set_xticks(x)
-    ax1.set_title(f"Performance Analysis: {graph_name}", fontsize=14, pad=20)
-    ax1.legend()
-    ax1.grid(True, linestyle=':', alpha=0.6)
+    ax1.set_title(f"Performance Analysis: {graph_name}", fontsize=16, pad=20, fontweight='bold')
+    ax1.legend(loc='upper right', fontsize=12)
+    ax1.grid(True, linestyle='--', alpha=0.5)
 
-    # 하단 표
+    # --- 수정 사항 1: 표 한글 깨짐 및 텍스트 크기 확대 ---
     ax2.axis('off')
     the_table = ax2.table(cellText=df.values, colLabels=df.columns, loc='center', cellLoc='center')
+    
+    # 표 스타일 설정
     the_table.auto_set_font_size(False)
-    the_table.set_fontsize(11)
-    the_table.scale(1, 1.8)
+    the_table.set_fontsize(20) # 기존 11에서 약 2배 확대
+    the_table.scale(1, 3.5)    # 셀 높이 확대 (글자 크기에 맞춰 조정)
+
+    # 헤더 행 폰트 굵게 및 배경색 (선택 사항)
+    for (row, col), cell in the_table.get_celld().items():
+        if row == 0:
+            cell.set_text_props(weight='bold', color='white')
+            cell.set_facecolor('#444444')
 
     plt.tight_layout()
     st.pyplot(fig)
