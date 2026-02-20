@@ -15,7 +15,7 @@ if 'rh_history' not in st.session_state:
 if 'target_val' not in st.session_state:
     st.session_state.target_val = 0.0
 
-# 3. CSS 주입 (정밀 조정된 디자인 유지)
+# 3. CSS 주입 (디자인 유지)
 st.markdown("""
     <style>
         .stApp { background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%); }
@@ -24,28 +24,13 @@ st.markdown("""
             font-weight: 700; color: #444444; font-size: 18px;
             margin-top: -50px; margin-bottom: -5px; padding-right: 5px;
         }
-        h1 { 
-            font-size: 1.9rem !important; 
-            margin-top: -48px !important;   
-            margin-bottom: 23px !important; 
-            color: #1E1E1E; 
-        }
+        h1 { font-size: 1.9rem !important; margin-top: -48px !important; margin-bottom: 23px !important; color: #1E1E1E; }
         hr { margin-top: 0px !important; margin-bottom: 20px !important; }
-        .stTabs { margin-top: 15px !important; overflow: visible !important; }
-        [data-baseweb="tab"] { 
-            margin-right: 40px !important; padding-top: 2px !important;     
-            padding-bottom: 8px !important; height: auto !important;
-        }
-        .stTabs [data-baseweb="tab"] p {
-            font-size: 0.95rem !important; white-space: pre !important; 
-            text-align: left !important; line-height: 1.4 !important;
-            font-weight: 500 !important; color: #31333F; margin: 0 !important;
-        }
-        .stTabs [data-baseweb="tab"] p::first-line { font-size: 1.3rem !important; font-weight: 700 !important; }
-        .stNumberInput, [data-testid="stMetric"], .stButton, .stTable {
+        .stTabs { margin-top: 15px !important; }
+        [data-baseweb="tab"] { margin-right: 40px !important; padding-bottom: 8px !important; }
+        .stNumberInput, [data-testid="stMetric"], .stButton {
             background-color: #ffffff; padding: 15px; border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); border: 1px solid #f0f0f0;
-            margin-bottom: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); border: 1px solid #f0f0f0; margin-bottom: 10px;
         }
         [data-testid="stMetricValue"] { font-size: 3.15rem !important; font-weight: 700 !important; color: #1f77b4; }
     </style>
@@ -59,33 +44,25 @@ tab1, tab2 = st.tabs(["💧 노점 계산\n    (Temp/RH → DP)", "☁️ 상대
 
 b, c = 17.625, 243.04
 
-# --- Tab 1: 노점 계산 ---
 with tab1:
     st.markdown('<div style="margin-top: 0px;"></div>', unsafe_allow_html=True)
     st.markdown("---")
-    st.header("📌 입력 (Input)")
     t1 = st.number_input("현재 온도 (°C)", value=None, step=0.1, format="%g", key="t1")
     rh1 = st.number_input("상대습도 (%)", value=None, min_value=0.1, max_value=100.0, step=0.1, format="%g", key="rh1")
-    
     if st.button("노점 계산하기", key="btn1", use_container_width=True):
         if t1 is not None and rh1 is not None:
             gamma1 = math.log(rh1 / 100.0) + (b * t1 / (c + t1))
             dp1 = (c * gamma1) / (b - gamma1)
             st.session_state.dp_history.append(dp1)
             if len(st.session_state.dp_history) > 10: st.session_state.dp_history.pop(0)
-            st.markdown("---")
-            st.header("📊 결과 (Result)")
             st.metric(label="계산된 이슬점 (Dew Point)", value=f"{dp1:.2f} °C")
         else: st.warning("값을 입력해주세요.")
 
-# --- Tab 2: 상대습도 계산 ---
 with tab2:
     st.markdown('<div style="margin-top: 0px;"></div>', unsafe_allow_html=True)
     st.markdown("---")
-    st.header("📌 입력 (Input)")
     t2 = st.number_input("현재 온도 (°C)", value=None, step=0.1, format="%g", key="t2")
     dp2 = st.number_input("이슬점(노점) (°C)", value=None, step=0.1, format="%g", key="dp2")
-    
     if st.button("상대습도 계산하기", key="btn2", use_container_width=True):
         if t2 is not None and dp2 is not None:
             gamma_dp = (b * dp2) / (c + dp2)
@@ -93,85 +70,82 @@ with tab2:
             rh_val = min(rh2, 100.0)
             st.session_state.rh_history.append(rh_val)
             if len(st.session_state.rh_history) > 10: st.session_state.rh_history.pop(0)
-            st.markdown("---")
-            st.header("📊 결과 (Result)")
             if rh2 > 100.1: st.error("노점이 온도보다 높을 수 없습니다.")
             else: st.metric(label="계산된 상대습도", value=f"{rh_val:.1f} %")
         else: st.warning("값을 입력해주세요.")
 
-# --- 데이터 시각화 및 수렴성 분석 섹션 ---
+# --- 데이터 분석 섹션 ---
 st.markdown("---")
 st.header("📈 데이터 경향 및 수렴성 분석")
 
-col_target_input, col_target_btn, col_graph_name = st.columns([2, 1, 2])
-with col_target_input:
-    new_target = st.number_input("목표값(Target) 입력", value=st.session_state.target_val, step=0.1, format="%g")
-with col_target_btn:
+c1, c2, c3 = st.columns([2, 1, 2])
+with c1:
+    new_target = st.number_input("목표값 입력", value=st.session_state.target_val, step=0.1, format="%g")
+with c2:
     st.write("<div style='margin-top: 32px;'></div>", unsafe_allow_html=True)
-    if st.button("목표값 적용"):
-        st.session_state.target_val = new_target
-        st.success(f"목표가 {new_target:.1f}로 설정되었습니다.")
-with col_graph_name:
-    graph_name = st.text_input("그래프 이름", value="JD_Performance_Trend")
+    if st.button("목표 적용"): st.session_state.target_val = new_target
+with c3:
+    graph_name = st.text_input("그래프 이름", value="JD_Trend_Report")
 
-current_history = st.session_state.dp_history if st.session_state.dp_history else st.session_state.rh_history
+# 데이터 선택 (노점 혹은 상대습도 중 값이 있는 것)
+current_data = st.session_state.dp_history if st.session_state.dp_history else st.session_state.rh_history
 unit = "°C" if st.session_state.dp_history else "%"
 
-if current_history:
-    # 1. 그래프 영역
-    fig, ax = plt.subplots(figsize=(10, 5))
-    x_axis = list(range(1, len(current_history) + 1))
-    ax.plot(x_axis, current_history, marker='o', markersize=8, linestyle='-', color='#1f77b4', linewidth=2.5, label='Measured Data')
+if current_data:
+    # 1. 표 데이터 미리 생성
+    rows = []
+    for i, v in enumerate(current_data):
+        target = st.session_state.target_val
+        gap = abs(target - v)
+        err = (gap / target * 100) if target != 0 else 0
+        rows.append([i+1, f"{v:.1f}", f"{target:.1f}", f"{gap:.1f}", f"{err:.1f}%"])
     
+    df = pd.DataFrame(rows, columns=["No.", f"측정({unit})", f"목표({unit})", "오차", "오차율"])
+
+    # 2. 통합 그래프 생성
+    # plt.close()를 사용하여 이전 그림 메모리 해제 (먹통 방지)
+    plt.close('all')
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 10), gridspec_kw={'height_ratios': [1.8, 1]})
+    
+    # 상단 그래프
+    x = list(range(1, len(current_data) + 1))
+    ax1.plot(x, current_data, marker='o', markersize=8, color='#1f77b4', linewidth=2, label='Measured')
     if st.session_state.target_val != 0:
-        ax.axhline(y=st.session_state.target_val, color='#d62728', linestyle='--', linewidth=2, label=f'Target ({st.session_state.target_val:.1f}{unit})')
+        ax1.axhline(y=st.session_state.target_val, color='#d62728', linestyle='--', label='Target')
     
-    ax.set_xticks(x_axis)
-    ax.set_xlabel("Test Sequence")
-    ax.set_ylabel(f"Value ({unit})")
-    ax.set_title(f"Trend Analysis: {graph_name}", fontsize=14, pad=20)
-    ax.grid(True, linestyle=':', alpha=0.7)
-    ax.legend()
+    # Y축 범위 자동 조정 (15% 여백)
+    all_vals = current_data + ([st.session_state.target_val] if st.session_state.target_val != 0 else [])
+    ymin, ymax = min(all_vals), max(all_vals)
+    margin = (ymax - ymin) * 0.15 if ymax != ymin else 2.0
+    ax1.set_ylim(ymin - margin, ymax + margin)
+    
+    ax1.set_xticks(x)
+    ax1.set_title(f"Performance Analysis: {graph_name}", fontsize=14, pad=20)
+    ax1.legend()
+    ax1.grid(True, linestyle=':', alpha=0.6)
+
+    # 하단 표
+    ax2.axis('off')
+    the_table = ax2.table(cellText=df.values, colLabels=df.columns, loc='center', cellLoc='center')
+    the_table.auto_set_font_size(False)
+    the_table.set_fontsize(11)
+    the_table.scale(1, 1.8)
+
+    plt.tight_layout()
     st.pyplot(fig)
 
-    # 2. 수렴성 분석 표 (문자열 포맷팅으로 소수점 강제 고정)
-    st.subheader("📋 수렴성 오차 분석")
-    analysis_data = []
-    for i, val in enumerate(current_history):
-        target = st.session_state.target_val
-        error = abs(target - val)
-        error_pct = (error / target * 100) if target != 0 else 0
-        
-        analysis_data.append({
-            "시행 (No.)": i + 1,
-            f"측정값 ({unit})": f"{val:.1f}",     # 소수점 첫째 자리 강제 고정
-            f"목표값 ({unit})": f"{target:.1f}",  # 소수점 첫째 자리 강제 고정
-            "오차 (Gap)": f"{error:.1f}",        # 소수점 첫째 자리 강제 고정
-            "오차율 (%)": f"{error_pct:.1f}%"
-        })
-    
-    st.table(pd.DataFrame(analysis_data))
-
-    # 3. 유틸리티 버튼
-    col_save, col_reset = st.columns(2)
-    with col_save:
+    # 3. 저장 및 리셋 버튼
+    b1, b2 = st.columns(2)
+    with b1:
         buf = io.BytesIO()
         fig.savefig(buf, format="png", dpi=300, bbox_inches='tight')
-        st.download_button(
-            label="📸 그래프 및 데이터 캡처 저장",
-            data=buf.getvalue(),
-            file_name=f"{graph_name}.png",
-            mime="image/png",
-            use_container_width=True
-        )
-    with col_reset:
-        if st.button("🧹 모든 데이터 초기화", use_container_width=True):
-            st.session_state.dp_history = []
-            st.session_state.rh_history = []
-            st.session_state.target_val = 0.0
+        st.download_button("📸 통합 리포트 저장", data=buf.getvalue(), file_name=f"{graph_name}.png", mime="image/png", use_container_width=True)
+    with b2:
+        if st.button("🧹 데이터 초기화", use_container_width=True):
+            st.session_state.dp_history, st.session_state.rh_history, st.session_state.target_val = [], [], 0.0
             st.rerun()
 else:
-    st.info("데이터를 입력하면 실시간 트래킹 그래프와 오차 분석표가 나타납니다.")
+    st.info("데이터를 입력하고 계산 버튼을 누르면 분석 리포트가 생성됩니다.")
 
 st.markdown("---")
 st.caption("Calculation based on Magnus-Tetens Formula | Precision Engineering Analytics")
