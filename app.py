@@ -23,11 +23,11 @@ st.markdown("""
         .jd-header {
             text-align: right; font-family: 'Noto Sans KR', sans-serif;
             font-weight: 700; color: #444444; font-size: 18px;
-            margin-top: -50px; margin-bottom: -5px; padding-right: 5px;
+            margin-top: -40px; margin-bottom: -5px; padding-right: 5px;
         }
         h1 { 
             font-size: 1.9rem !important; 
-            margin-top: -40px !important;   
+            margin-top: -45px !important;   
             margin-bottom: 23px !important; 
             color: #1E1E1E; 
         }
@@ -152,7 +152,7 @@ if current_history:
     # 여기서는 범용성을 위해 영문 키워드와 함께 구성
     the_table = ax2.table(cellText=analysis_df.values, colLabels=analysis_df.columns, loc='center', cellLoc='center')
     the_table.auto_set_font_size(False)
-    the_table.set_fontsize(5)
+    the_table.set_fontsize(15)
     the_table.scale(1.1, 1.8) # 표의 셀 높이 조절
     
     st.pyplot(fig)
