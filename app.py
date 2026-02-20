@@ -4,10 +4,10 @@ import math
 # 1. 페이지 설정
 st.set_page_config(page_title="JD Calculator - Dew Point", layout="centered")
 
-# 2. CSS 주입: 탭과 콘텐츠 사이의 유격을 최소화
+# 2. CSS 주입: 디자인 및 레이아웃 최적화
 st.markdown("""
     <style>
-        /* 배경 설정 */
+        /* 배경 설정: 은은한 그라데이션 */
         .stApp {
             background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
         }
@@ -27,14 +27,14 @@ st.markdown("""
         /* [제목 설정] */
         h1 {
             font-size: 1.9rem !important; 
-            margin-bottom: -15px !important;
+            margin-bottom: -10px !important;
             color: #1E1E1E;
         }
         
         /* 상단 메인 구분선 스타일 */
         hr {
             margin-top: 0px !important;
-            margin-bottom: 20px !important;
+            margin-bottom: 25px !important;
         }
 
         /* [탭 전체 위치 조절] */
@@ -43,32 +43,27 @@ st.markdown("""
             overflow: visible !important; 
         }
 
-        /* [핵심 수정: 탭 버튼] 글자와 빨간 라인 사이 간격을 8px로 축소 */
+        /* [탭 버튼 설정] 하단 간격 축소 */
         [data-baseweb="tab"] { 
             margin-right: 40px !important; 
             padding-top: 2px !important;     
-            padding-bottom: 8px !important;  /* 기존 25px -> 8px로 축소 */
+            padding-bottom: 8px !important;  
             height: auto !important;
             overflow: visible !important;
         }
 
-        /* [핵심 수정: 탭 패널] 빨간 라인 바로 밑의 여백을 제거 */
-        [data-testid="stTabPanel"] {
-            padding-top: 0px !important;
-        }
-
-        /* 탭 텍스트 설정 */
+        /* 탭 텍스트 설정 (괄호 포함) */
         .stTabs [data-baseweb="tab"] p {
             font-size: 0.95rem !important; 
             white-space: pre !important; 
             text-align: left !important;
-            line-height: 1.4 !important;
+            line-height: 1.5 !important;
             font-weight: 500 !important;
             color: #31333F;
             margin: 0 !important;
         }
 
-        /* 탭 첫 줄 강조 */
+        /* 탭 첫 줄 강조 및 크기 확대 */
         .stTabs [data-baseweb="tab"] p::first-line {
             font-size: 1.3rem !important; 
             font-weight: 700 !important;
@@ -99,44 +94,50 @@ tab1, tab2 = st.tabs([
     "☁️ 상대습도 계산\n    (Temp/DP → RH)"
 ])
 
-# 계산 로직 (Magnus Formula)
+# Magnus 상수
 b = 17.625
 c = 243.04
 
 with tab1:
-    # [수정] 빨간 라인과 구분선 사이의 간격을 0으로 조정
-    st.markdown('<div style="margin-top: 0px;"></div>', unsafe_allow_html=True)
+    st.markdown('<div style="margin-top: 20px;"></div>', unsafe_allow_html=True)
     st.markdown("---")
     
     st.header("📌 입력 (Input)")
-    t1 = st.number_input("온도 (°C)", value=25.0, step=0.1, key="t1")
-    rh1 = st.number_input("상대습도 (%)", value=50.0, min_value=0.1, max_value=100.0, step=0.1, key="rh1")
+    # [수정] value=None으로 초기화, format="%g"로 불필요한 0 제거
+    t1 = st.number_input("현재 온도 (°C)", value=None, step=0.1, format="%g", key="t1")
+    rh1 = st.number_input("상대습도 (%)", value=None, min_value=0.1, max_value=100.0, step=0.1, format="%g", key="rh1")
     
     if st.button("노점 계산하기", key="btn1", use_container_width=True):
-        gamma1 = math.log(rh1 / 100.0) + (b * t1 / (c + t1))
-        dp1 = (c * gamma1) / (b - gamma1)
-        st.markdown("---")
-        st.header("📊 결과 (Result)")
-        st.metric(label="계산된 이슬점 (Dew Point)", value=f"{dp1:.2f} °C")
+        if t1 is not None and rh1 is not None:
+            gamma1 = math.log(rh1 / 100.0) + (b * t1 / (c + t1))
+            dp1 = (c * gamma1) / (b - gamma1)
+            st.markdown("---")
+            st.header("📊 결과 (Result)")
+            st.metric(label="계산된 이슬점 (Dew Point)", value=f"{dp1:.2f} °C")
+        else:
+            st.warning("온도와 상대습도를 모두 입력해주세요.")
 
 with tab2:
-    # [수정] 빨간 라인과 구분선 사이의 간격을 0으로 조정
-    st.markdown('<div style="margin-top: 0px;"></div>', unsafe_allow_html=True)
+    st.markdown('<div style="margin-top: 30px;"></div>', unsafe_allow_html=True)
     st.markdown("---")
     
     st.header("📌 입력 (Input)")
-    t2 = st.number_input("온도 (°C)", value=25.0, step=0.1, key="t2")
-    dp2 = st.number_input("노점 (°C)", value=13.9, step=0.1, key="dp2")
+    # [수정] value=None으로 초기화, format="%g"로 불필요한 0 제거
+    t2 = st.number_input("현재 온도 (°C)", value=None, step=0.1, format="%g", key="t2")
+    dp2 = st.number_input("이슬점(노점) (°C)", value=None, step=0.1, format="%g", key="dp2")
     
     if st.button("상대습도 계산하기", key="btn2", use_container_width=True):
-        gamma_dp = (b * dp2) / (c + dp2)
-        rh2 = 100 * math.exp(gamma_dp - (b * t2) / (c + t2))
-        st.markdown("---")
-        st.header("📊 결과 (Result)")
-        if rh2 > 100.1:
-            st.error(f"오류: 노점({dp2}°C)이 현재 온도({t2}°C)보다 높을 수 없습니다.")
+        if t2 is not None and dp2 is not None:
+            gamma_dp = (b * dp2) / (c + dp2)
+            rh2 = 100 * math.exp(gamma_dp - (b * t2) / (c + t2))
+            st.markdown("---")
+            st.header("📊 결과 (Result)")
+            if rh2 > 100.1:
+                st.error(f"오류: 노점({dp2}°C)이 현재 온도({t2}°C)보다 높을 수 없습니다.")
+            else:
+                st.metric(label="계산된 상대습도 (Relative Humidity)", value=f"{min(rh2, 100.0):.1f} %")
         else:
-            st.metric(label="계산된 상대습도 (Relative Humidity)", value=f"{min(rh2, 100.0):.1f} %")
+            st.warning("온도와 이슬점을 모두 입력해주세요.")
 
 st.markdown("---")
 st.caption("Calculation based on Magnus-Tetens Formula | Professional Engineering Tool")
