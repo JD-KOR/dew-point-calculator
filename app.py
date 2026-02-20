@@ -16,7 +16,7 @@ if 'rh_history' not in st.session_state:
 if 'target_val' not in st.session_state:
     st.session_state.target_val = 0.0
 
-# 3. CSS 주입 (웹 화면 표 폰트 크기 수정 포함)
+# 3. CSS 주입 (불필요한 표 관련 설정 제거 및 디자인 유지)
 st.markdown("""
     <style>
         .stApp { background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%); }
@@ -25,13 +25,6 @@ st.markdown("""
             font-weight: 700; color: #444444; font-size: 15px;
             margin-top: -45px; margin-bottom: -5px; padding-right: 5px;
         }
-        
-        /* --- [수정 사항] 웹 화면의 '수렴성 오차 분석' 표 글자 크기 확대 --- */
-        .stTable td, .stTable th {
-            font-size: 0.5rem !important; /* 글자 크기를 크게 조절 */
-            padding: 12px !important;
-        }
-
         h1 { 
             font-size: 1.9rem !important; 
             margin-top: -48px !important;   
@@ -50,7 +43,7 @@ st.markdown("""
             font-weight: 500 !important; color: #31333F; margin: 0 !important;
         }
         .stTabs [data-baseweb="tab"] p::first-line { font-size: 1.3rem !important; font-weight: 700 !important; }
-        .stNumberInput, [data-testid="stMetric"], .stButton, .stTable {
+        .stNumberInput, [data-testid="stMetric"], .stButton {
             background-color: #ffffff; padding: 15px; border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); border: 1px solid #f0f0f0;
             margin-bottom: 10px;
@@ -67,7 +60,7 @@ tab1, tab2 = st.tabs(["💧 노점 계산\n    (Temp/RH → DP)", "☁️ 상대
 
 b, c = 17.625, 243.04
 
-# --- Tab 1 & 2 로직 (기존 유지) ---
+# --- Tab 1 & 2 로직 ---
 with tab1:
     st.markdown('<div style="margin-top: 0px;"></div>', unsafe_allow_html=True)
     st.markdown("---")
@@ -100,9 +93,9 @@ with tab2:
             else: st.metric(label="계산된 상대습도", value=f"{rh_val:.1f} %")
         else: st.warning("값을 입력해주세요.")
 
-# --- 데이터 시각화 및 수렴성 분석 섹션 ---
+# --- 데이터 시각화 및 분석 섹션 ---
 st.markdown("---")
-st.header("📈 데이터 경향 및 수렴성 분석")
+st.header("📈 데이터 경향 분석")
 
 col_target_input, col_target_btn, col_graph_name = st.columns([2, 1, 2])
 with col_target_input:
@@ -111,7 +104,7 @@ with col_target_btn:
     st.write("<div style='margin-top: 32px;'></div>", unsafe_allow_html=True)
     if st.button("목표값 적용"):
         st.session_state.target_val = new_target
-        st.success(f"목표가 {new_target:.1f}로 설정되었습니다.")
+        st.success(f"설정 완료")
 with col_graph_name:
     graph_name = st.text_input("그래프 이름", value="JD_Performance_Trend")
 
@@ -120,7 +113,6 @@ unit = "°C" if st.session_state.dp_history else "%"
 
 if current_history:
     # 1. 통합 리포트 생성 (그래프 + 표)
-    # 이미지 저장 시 표가 잘리지 않도록 figsize 조절 및 subplot 분할
     plt.close('all')
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 10), gridspec_kw={'height_ratios': [1.5, 1]})
     
@@ -131,11 +123,10 @@ if current_history:
     if st.session_state.target_val != 0:
         ax1.axhline(y=st.session_state.target_val, color='#d62728', linestyle='--', linewidth=2, label='Target')
 
-    # --- 수정 사항 2: 스케일 여유 공간 확보 (상하 30% 마진) ---
+    # 스케일 여유 공간 확보 (상하 30% 마진)
     all_data = current_history + ([st.session_state.target_val] if st.session_state.target_val != 0 else [])
     y_min, y_max = min(all_data), max(all_data)
-    y_range = y_max - y_min
-    if y_range == 0: y_range = 1.0 # 모든 값이 같을 경우 대비
+    y_range = y_max - y_min if y_max != y_min else 1.0
     ax1.set_ylim(y_min - y_range * 0.3, y_max + y_range * 0.3)
     
     ax1.set_xticks(x_axis)
@@ -145,7 +136,7 @@ if current_history:
     ax1.grid(True, linestyle=':', alpha=0.7)
     ax1.legend()
 
-    # [하단: 표 영역 생성 (수정 사항 1)]
+    # [하단: 표 데이터 생성]
     ax2.axis('off')
     analysis_df = pd.DataFrame({
         "No.": list(range(1, len(current_history) + 1)),
@@ -155,27 +146,22 @@ if current_history:
         "Error(%)": [f"{(abs(st.session_state.target_val - v)/st.session_state.target_val*100):.1f}%" if st.session_state.target_val != 0 else "0.0%" for v in current_history]
     })
     
-    # Matplotlib Table 생성 (한글 깨짐을 고려하여 영문 헤더 권장하거나 별도 폰트 설정 필요)
-    # 여기서는 범용성을 위해 영문 키워드와 함께 구성
+    # 이미지 포함용 Matplotlib Table 생성
     the_table = ax2.table(cellText=analysis_df.values, colLabels=analysis_df.columns, loc='center', cellLoc='center')
     the_table.auto_set_font_size(False)
-    the_table.set_fontsize(15)
-    the_table.scale(1.1, 1.8) # 표의 셀 높이 조절
+    the_table.set_fontsize(13)
+    the_table.scale(1.1, 1.8) 
     
+    # 통합 리포트 화면 표시
     st.pyplot(fig)
 
-    # 2. 웹 화면용 표 (기존 스타일 유지)
-    st.subheader("📋 수렴성 오차 분석")
-    st.table(analysis_df)
-
-    # 3. 유틸리티 버튼
+    # 2. 유틸리티 버튼
     col_save, col_reset = st.columns(2)
     with col_save:
         buf = io.BytesIO()
-        # 이미지 저장 시 bbox_inches='tight'를 사용하여 표가 잘리지 않게 함
         fig.savefig(buf, format="png", dpi=300, bbox_inches='tight')
         st.download_button(
-            label="📸 그래프 및 데이터 통합 저장",
+            label="📸 통합 리포트 이미지 저장",
             data=buf.getvalue(),
             file_name=f"{graph_name}.png",
             mime="image/png",
@@ -188,7 +174,7 @@ if current_history:
             st.session_state.target_val = 0.0
             st.rerun()
 else:
-    st.info("데이터를 입력하면 실시간 트래킹 그래프와 오차 분석표가 나타납니다.")
+    st.info("데이터를 입력하면 실시간 트래킹 그래프와 통합 리포트가 생성됩니다.")
 
 st.markdown("---")
 st.caption("Calculation based on Magnus-Tetens Formula | Precision Engineering Analytics")
