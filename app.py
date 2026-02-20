@@ -16,18 +16,25 @@ if 'rh_history' not in st.session_state:
 if 'target_val' not in st.session_state:
     st.session_state.target_val = 0.0
 
-# 3. CSS 주입 (정밀 조정된 디자인 유지)
+# 3. CSS 주입 (웹 화면 표 폰트 크기 수정 포함)
 st.markdown("""
     <style>
         .stApp { background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%); }
         .jd-header {
             text-align: right; font-family: 'Noto Sans KR', sans-serif;
             font-weight: 700; color: #444444; font-size: 18px;
-            margin-top: -40px; margin-bottom: -5px; padding-right: 5px;
+            margin-top: -45px; margin-bottom: -5px; padding-right: 5px;
         }
+        
+        /* --- [수정 사항] 웹 화면의 '수렴성 오차 분석' 표 글자 크기 확대 --- */
+        .stTable td, .stTable th {
+            font-size: 1.2rem !important; /* 글자 크기를 크게 조절 */
+            padding: 12px !important;
+        }
+
         h1 { 
             font-size: 1.9rem !important; 
-            margin-top: -45px !important;   
+            margin-top: -48px !important;   
             margin-bottom: 23px !important; 
             color: #1E1E1E; 
         }
