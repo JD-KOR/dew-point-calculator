@@ -22,13 +22,13 @@ st.markdown("""
         .stApp { background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%); }
         .jd-header {
             text-align: right; font-family: 'Noto Sans KR', sans-serif;
-            font-weight: 700; color: #444444; font-size: 18px;
+            font-weight: 700; color: #444444; font-size: 15px;
             margin-top: -45px; margin-bottom: -5px; padding-right: 5px;
         }
         
         /* --- [수정 사항] 웹 화면의 '수렴성 오차 분석' 표 글자 크기 확대 --- */
         .stTable td, .stTable th {
-            font-size: 1.2rem !important; /* 글자 크기를 크게 조절 */
+            font-size: 1.0rem !important; /* 글자 크기를 크게 조절 */
             padding: 12px !important;
         }
 
